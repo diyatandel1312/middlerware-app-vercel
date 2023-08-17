@@ -1,25 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { connect } from 'react-redux';
+import { fetchDataFromAPI } from './actions';
 
-function App() {
+const App = ({ loading, data, error, fetchData }) => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <button onClick={fetchData} disabled={loading}>
+        {loading ? 'Loading...' : 'Fetch Data'}
+      </button>
+        {error && <p>Error: {error}</p>}
+      <ul>
+        {data.map((user) => (
+          <li key={user.id}>{user.login}</li>
+        ))}
+      </ul>
     </div>
   );
-}
+};
 
-export default App;
+const mapStateToProps = (state) => ({
+  loading: state.loading,
+  data: state.data,
+  error: state.error,
+});
+
+const mapDispatchToProps = {
+  fetchData: fetchDataFromAPI,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
